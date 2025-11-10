@@ -1,0 +1,7 @@
+# Web component configuration for Shopify CLI
+
+type = "frontend"
+port = 3000
+
+[commands]
+dev = "npm exec remix vite:dev"

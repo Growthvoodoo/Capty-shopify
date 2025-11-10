@@ -1,0 +1,38 @@
+{
+  "name": "capty-shopify-app",
+  "version": "1.0.0",
+  "description": "Shopify app for Capty - Disc Golf product aggregation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "remix vite:dev",
+    "build": "remix vite:build",
+    "start": "remix-serve ./build/server/index.js",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.9.1",
+    "@remix-run/node": "^2.5.1",
+    "@remix-run/react": "^2.5.1",
+    "@remix-run/serve": "^2.5.1",
+    "@shopify/app-bridge-react": "^4.1.2",
+    "@shopify/polaris": "^12.16.0",
+    "@shopify/shopify-api": "^9.0.1",
+    "@shopify/shopify-app-remix": "^2.6.0",
+    "@shopify/shopify-app-session-storage-prisma": "^4.0.3",
+    "isbot": "^4.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "^2.5.1",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "prisma": "^5.9.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
