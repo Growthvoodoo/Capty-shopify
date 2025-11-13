@@ -8,7 +8,9 @@
     "dev": "remix vite:dev",
     "build": "remix vite:build",
     "start": "remix-serve ./build/server/index.js",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "postinstall": "prisma generate",
+    "setup:production": "prisma db push && prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.9.1",

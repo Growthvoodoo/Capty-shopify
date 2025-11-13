@@ -1,19 +1,42 @@
-# Capty Shopify App - Disc Golf Product Manager
+# Capty Shopify App
 
-A Shopify app for aggregating disc golf products from multiple stores. This app allows you to fetch products from Shopify stores, edit their information, and prepare them for centralized disc golf product comparison.
+A Shopify sales channel app for the Capty disc golf marketplace. This app allows disc golf stores to publish their products to the Capty mobile app and earn commissions on sales from tracked links.
 
-## Phase 1 Features
+## Features
 
-- Fetch products from Shopify store (title, description, price, inventory, variants)
-- Display products in an easy-to-read format
-- Edit product information within the app
-- View product variants with detailed information (SKU, price, inventory, weight)
+- 🏪 **Sales Channel Integration** - Products appear in Shopify's Publishing section
+- 🥏 **Disc Golf Data Management** - Store speed, glide, turn, fade, and other disc specifications
+- 💰 **Commission Tracking** - Automatic 10% commission on sales from Capty mobile app
+- 📊 **Dashboard** - View commissions, track orders, and manage published products
+- 🔗 **Click Attribution** - Track which user and disc drove each sale
+- 📱 **Mobile App API** - Endpoint for Capty mobile app to fetch products
+
+##  Quick Start
+
+### Development
+
+```bash
+# Install dependencies
+npm install
+
+# Run dev server
+npm run dev
+
+# Open http://localhost:3000
+```
+
+### Deployment to DigitalOcean
+
+See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for comprehensive deployment instructions.
+
+**⚠️ Critical for deployment:** Set `DATABASE_URL=file:/data/prod.sqlite` (absolute path!) to avoid "non-zero exit code" error.
 
 ## Prerequisites
 
 - Node.js 18 or higher
 - A Shopify Partner account
 - A Shopify development store (for testing)
+- DigitalOcean account (for deployment)
 
 ## Setup Instructions
 
