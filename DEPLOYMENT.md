@@ -25,7 +25,23 @@ DATABASE_URL=file:dev.sqlite          # No path - fails
 DATABASE_URL=file:/data/prod.sqlite   # Absolute path with /data directory
 ```
 
-#### 2. Ensure Prisma Generate Runs
+#### 2. Ensure Prisma is in Production Dependencies
+
+**⚠️ CRITICAL:** `prisma` must be in `dependencies`, NOT `devDependencies`!
+
+Production builds don't install devDependencies, so `prisma generate` will fail if the CLI isn't available.
+
+```json
+{
+  "dependencies": {
+    "@prisma/client": "^5.9.1",
+    "prisma": "^5.9.1",  // ← Must be here, NOT in devDependencies
+    ...
+  }
+}
+```
+
+#### 3. Add Prisma Generation Scripts
 
 Add `postinstall` script to `package.json` (already added):
 
@@ -145,10 +161,22 @@ npx prisma generate
 4. **Node version is 18+**
    - Check in DigitalOcean → Settings → Runtime & Build
 
-### Issue 2: "Module not found: prisma client"
+### Issue 2: "Module not found: prisma client" or "prisma: command not found"
 
 **Fix:**
-- Make sure `postinstall` script runs: `"postinstall": "prisma generate"`
+- **Most Common Cause:** `prisma` is in `devDependencies` instead of `dependencies`
+  ```json
+  // ❌ Wrong - causes "command not found" in production:
+  "devDependencies": {
+    "prisma": "^5.9.1"
+  }
+
+  // ✅ Correct - available in production:
+  "dependencies": {
+    "prisma": "^5.9.1"
+  }
+  ```
+- Also ensure `postinstall` script runs: `"postinstall": "prisma generate"`
 - Or add to build command: `npm run build && prisma generate`
 
 ### Issue 3: "Database is locked" or "Cannot access database"
@@ -223,6 +251,7 @@ After deployment, the tracking script URL will change:
 Before deploying, verify:
 
 - [ ] `.dockerignore` file exists
+- [ ] **`prisma` is in `dependencies`, NOT `devDependencies`** ⚠️ CRITICAL!
 - [ ] `postinstall` script in package.json: `"postinstall": "prisma generate"`
 - [ ] All environment variables set in DigitalOcean
 - [ ] `DATABASE_URL` uses absolute path: `file:/data/prod.sqlite`
