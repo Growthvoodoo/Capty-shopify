@@ -1,26 +1,29 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-name = "capty-app"
-client_id = ""
-application_url = "https://localhost:3000"
+client_id = "06c67977ed4e4772a1e64826c2aebac2"
+name = "Capty"
+application_url = "https://example.com"
 embedded = true
-
-[access_scopes]
-scopes = "read_products,read_orders,write_products"
-
-[auth]
-redirect_urls = []  # Managed automatically by Shopify CLI
-
-[webhooks]
-api_version = "2024-01"
-
-[[webhooks.subscriptions]]
-topics = [ "app/uninstalled" ]
-uri = "/webhooks"
-
-[pos]
-embedded = false
 
 [build]
 automatically_update_urls_on_dev = true
-include_config_on_deploy = true
+
+[webhooks]
+api_version = "2025-10"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_channels,write_channels,read_orders,read_product_listings,write_product_listings,read_products,write_products,read_publications,write_publications,read_script_tags,write_script_tags"
+optional_scopes = [ ]
+use_legacy_install_flow = false
+
+[auth]
+redirect_urls = [ ]
+
+[app_proxy]
+url = "https://example.com/api/proxy"
+subpath = "capty"
+prefix = "apps"
+
+[pos]
+embedded = false

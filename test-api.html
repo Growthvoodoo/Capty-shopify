@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Capty API</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        .input-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #5469d4;
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #4355c7;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f8f8;
+            border-radius: 8px;
+            border-left: 4px solid #5469d4;
+        }
+        .error {
+            border-left-color: #e74c3c;
+            background: #fee;
+        }
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .product-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .product-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .product-specs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .spec {
+            text-align: center;
+            padding: 8px;
+            background: #f8f8f8;
+            border-radius: 4px;
+        }
+        .spec-label {
+            color: #666;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        .spec-value {
+            font-weight: bold;
+            color: #333;
+            font-size: 16px;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        .loading.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🥏 Test Capty API</h1>
+        <p style="color: #666;">Fetch disc golf products from your Shopify store</p>
+
+        <div class="input-group">
+            <label>API URL</label>
+            <input type="text" id="apiUrl" value="http://localhost:3000/api/products?shop=captydevstore.myshopify.com" />
+        </div>
+
+        <div class="input-group">
+            <label>API Key</label>
+            <input type="text" id="apiKey" value="capty-secret-key-2025" />
+        </div>
+
+        <button id="fetchBtn">Fetch Products</button>
+
+        <div class="loading" id="loading">
+            Loading...
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('fetchBtn').addEventListener('click', async () => {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const apiKey = document.getElementById('apiKey').value;
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+            const fetchBtn = document.getElementById('fetchBtn');
+
+            // Show loading
+            loadingDiv.classList.add('active');
+            fetchBtn.disabled = true;
+            resultDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'x-capty-api-key': apiKey
+                    }
+                });
+
+                const data = await response.json();
+
+                // Hide loading
+                loadingDiv.classList.remove('active');
+                fetchBtn.disabled = false;
+
+                if (!response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h3>❌ Error</h3>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Message:</strong> ${data.error || 'Unknown error'}</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Display results
+                let html = `
+                    <div class="result">
+                        <h3>✅ Success</h3>
+                        <p><strong>Shop:</strong> ${data.shop || 'N/A'}</p>
+                        <p><strong>Total Products:</strong> ${data.total || 0}</p>
+                    </div>
+                `;
+
+                if (data.products && data.products.length > 0) {
+                    html += '<h2 style="margin-top: 30px;">Products:</h2>';
+
+                    data.products.forEach(product => {
+                        html += `
+                            <div class="product-card">
+                                <div class="product-title">${product.name}</div>
+
+                                <div class="product-specs">
+                                    <div class="spec">
+                                        <div class="spec-label">Speed</div>
+                                        <div class="spec-value">${product.speed}</div>
+                                    </div>
+                                    <div class="spec">
+                                        <div class="spec-label">Glide</div>
+                                        <div class="spec-value">${product.glide}</div>
+                                    </div>
+                                    <div class="spec">
+                                        <div class="spec-label">Turn</div>
+                                        <div class="spec-value">${product.turn}</div>
+                                    </div>
+                                    <div class="spec">
+                                        <div class="spec-label">Fade</div>
+                                        <div class="spec-value">${product.fade}</div>
+                                    </div>
+                                </div>
+
+                                <p><strong>Type:</strong> ${product.type}</p>
+                                <p><strong>Brand ID:</strong> ${product.disc_brand_id}</p>
+                                <p><strong>Description:</strong> ${product.description.substring(0, 100)}${product.description.length > 100 ? '...' : ''}</p>
+                                <p><strong>Media URLs:</strong> ${product.medias.length} images</p>
+                                <p><strong>Tags:</strong> ${JSON.stringify(product.tags)}</p>
+                                <p><strong>Active:</strong> ${product.is_active ? '✅ Yes' : '❌ No'}</p>
+
+                                <details style="margin-top: 15px;">
+                                    <summary style="cursor: pointer; font-weight: bold;">View Full JSON</summary>
+                                    <pre>${JSON.stringify(product, null, 2)}</pre>
+                                </details>
+                            </div>
+                        `;
+                    });
+                } else {
+                    html += '<p style="margin-top: 20px; color: #666;">No products found. Make sure you have published products to Capty and saved their disc golf data.</p>';
+                }
+
+                resultDiv.innerHTML = html;
+
+            } catch (error) {
+                loadingDiv.classList.remove('active');
+                fetchBtn.disabled = false;
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ Network Error</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

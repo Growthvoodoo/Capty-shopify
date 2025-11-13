@@ -20,6 +20,7 @@ import { TitleBar } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 import { useState, useEffect } from "react";
 import { ClientOnly } from "../components/ClientOnly";
+import prisma from "../db.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await authenticate.admin(request);
@@ -27,7 +28,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const { admin } = await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
   const formData = await request.formData();
   const action = formData.get("action");
 
@@ -146,6 +147,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
   }
 
+  // Publishing is now handled in Shopify admin via the Capty sales channel
+
   if (action === "analyzeImage") {
     const imageUrl = formData.get("imageUrl");
     // This would be handled by the client-side using Claude or another AI service
@@ -228,6 +231,7 @@ export default function Index() {
   };
 
   const handleAddToCapty = (product: any) => {
+    // Save to localStorage
     const savedProducts = JSON.parse(localStorage.getItem('captyProducts') || '[]');
     const aiData = aiExtractedData[product.id] || {};
     const productToSave = {
@@ -239,7 +243,18 @@ export default function Index() {
     };
     savedProducts.push(productToSave);
     localStorage.setItem('captyProducts', JSON.stringify(savedProducts));
-    alert(`${product.title} added to Capty app!`);
+
+    // Also publish to database
+    const variantIds = product.variants?.edges?.map((edge: any) => edge.node.id) || [];
+    const formData = new FormData();
+    formData.append("action", "publishToCapty");
+    formData.append("productId", product.id);
+    formData.append("productTitle", product.title);
+    formData.append("productHandle", product.handle || product.id);
+    formData.append("variantIds", JSON.stringify(variantIds));
+    submit(formData, { method: "post" });
+
+    alert(`${product.title} published to Capty app!`);
   };
 
   const handleAddAllToCapty = () => {
@@ -442,9 +457,6 @@ export default function Index() {
                                 )}
                                 <Button size="slim" onClick={() => handleEditProduct(product)}>
                                   Edit
-                                </Button>
-                                <Button size="slim" variant="primary" onClick={() => handleAddToCapty(product)}>
-                                  Add to Capty app
                                 </Button>
                               </InlineStack>
                             </InlineStack>

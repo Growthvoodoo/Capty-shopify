@@ -1,0 +1,9 @@
+[[extensions]]
+type = "product_subscription"
+name = "capty-sales-channel"
+handle = "capty-sales-channel"
+
+[extensions.channels]
+# Register Capty as a sales channel
+[[extensions.channels.settings]]
+type = "single_product"

@@ -24,3 +24,94 @@ model Session {
   collaborator Boolean? @default(false)
   emailVerified Boolean? @default(false)
 }
+
+model ProductPublication {
+  id              String   @id @default(uuid())
+  shop            String
+  productId       String
+  productTitle    String
+  productHandle   String
+  variantIds      String   // JSON array of variant IDs
+  publishedAt     DateTime @default(now())
+  unpublishedAt   DateTime?
+  isPublished     Boolean  @default(true)
+
+  @@unique([shop, productId])
+  @@index([shop, isPublished])
+}
+
+model CaptyClick {
+  id              String   @id @default(uuid())
+  shop            String
+  captyClickId    String   @unique
+  captyUserId     String?
+  productId       String?
+  productHandle   String?
+  ipAddress       String?
+  userAgent       String?
+  createdAt       DateTime @default(now())
+
+  @@index([shop, captyClickId])
+  @@index([captyClickId])
+}
+
+model CaptyOrder {
+  id                String   @id @default(uuid())
+  shop              String
+  orderId           String
+  orderName         String?
+  captyClickId      String?
+  captyUserId       String?
+  totalPrice        Float
+  currencyCode      String   @default("USD")
+  commissionAmount  Float
+  commissionRate    Float    @default(0.10)
+  orderStatus       String   @default("pending")
+  commissionPaid    Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  paidAt            DateTime?
+
+  @@unique([shop, orderId])
+  @@index([shop, commissionPaid])
+  @@index([captyClickId])
+}
+
+model Commission {
+  id              String   @id @default(uuid())
+  shop            String
+  month           String   // Format: "YYYY-MM"
+  totalOrders     Int      @default(0)
+  totalSales      Float    @default(0)
+  totalCommission Float    @default(0)
+  isPaid          Boolean  @default(false)
+  paidAt          DateTime?
+  paymentMethod   String?  // "stripe", "shopify_billing", "manual"
+  paymentRef      String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([shop, month])
+  @@index([shop, isPaid])
+}
+
+model DiscGolfProduct {
+  id            String   @id @default(uuid())
+  shop          String
+  productId     String   // Shopify product ID
+  name          String
+  discBrandId   Int      @default(1)
+  speed         Float    @default(12.3)
+  glide         Float    @default(8.3)
+  turn          Float    @default(7.2)
+  fade          Float    @default(4.5)
+  description   String
+  medias        String   // JSON array of image URLs
+  type          String   @default("Round")
+  isActive      Boolean  @default(true)
+  tags          String   @default("[24]") // JSON array
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([shop, productId])
+  @@index([shop, isActive])
+}

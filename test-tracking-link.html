@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capty Mobile App - Test Link</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        .product-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .product-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .product-specs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        .spec {
+            text-align: center;
+            padding: 8px;
+            background: #f8f8f8;
+            border-radius: 4px;
+        }
+        .spec-label {
+            color: #666;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        .spec-value {
+            font-weight: bold;
+            color: #333;
+            font-size: 16px;
+        }
+        .btn {
+            display: inline-block;
+            background: #5469d4;
+            color: white;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background 0.2s;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+        .btn:hover {
+            background: #4355c7;
+        }
+        .info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .info p {
+            margin: 5px 0;
+            color: #1565c0;
+            font-size: 14px;
+        }
+        .url-preview {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+            margin: 10px 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🥏 Capty Mobile App</h1>
+        <p style="color: #666;">Test the commission tracking link</p>
+
+        <div class="product-card">
+            <div class="product-title">Dimension Fission Gyropalooza 2025</div>
+
+            <div class="product-specs">
+                <div class="spec">
+                    <div class="spec-label">Speed</div>
+                    <div class="spec-value">12.3</div>
+                </div>
+                <div class="spec">
+                    <div class="spec-label">Glide</div>
+                    <div class="spec-value">8.3</div>
+                </div>
+                <div class="spec">
+                    <div class="spec-label">Turn</div>
+                    <div class="spec-value">7.2</div>
+                </div>
+                <div class="spec">
+                    <div class="spec-label">Fade</div>
+                    <div class="spec-value">4.5</div>
+                </div>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <strong>Type:</strong> Round Disc<br>
+                <strong>Brand:</strong> MVP
+            </div>
+
+            <a href="https://captydevstore.myshopify.com/products/dimension-fission-gyropalooza-2025?capty_click_id=MOBILE-CLICK-2025-TEST-001&capty_user_id=mobile-user-456"
+               class="btn"
+               id="trackingLink">
+                View Product on Store →
+            </a>
+        </div>
+
+        <div class="info">
+            <p><strong>📍 How this works:</strong></p>
+            <p>1. Click the button above (simulates mobile app click)</p>
+            <p>2. Add product to cart and complete checkout</p>
+            <p>3. Check the Commissions page in Capty app</p>
+            <p>4. You should see 10% commission tracked!</p>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <strong>Tracking URL:</strong>
+            <div class="url-preview" id="urlPreview">
+                https://captydevstore.myshopify.com/products/dimension-fission-gyropalooza-2025?capty_click_id=MOBILE-CLICK-2025-TEST-001&capty_user_id=mobile-user-456
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 4px; border-left: 4px solid #ffc107;">
+            <p style="margin: 0; color: #856404; font-size: 14px;">
+                <strong>⚠️ Important:</strong> Make sure you've installed the tracking script first!
+                <br>Go to your Capty app → "Install Script" → Click "Install Tracking Script"
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Log when link is clicked
+        document.getElementById('trackingLink').addEventListener('click', function(e) {
+            console.log('🎯 Capty tracking link clicked!');
+            console.log('Click ID: MOBILE-CLICK-2025-TEST-001');
+            console.log('User ID: mobile-user-456');
+            console.log('Redirecting to:', this.href);
+        });
+    </script>
+</body>
+</html>
