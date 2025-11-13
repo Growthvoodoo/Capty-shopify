@@ -85,21 +85,33 @@ Add `postinstall` script to `package.json` (already added):
 
 #### Environment Variables (CRITICAL!)
 
-Add these environment variables in DigitalOcean dashboard:
+**⚠️ TWO-STEP PROCESS:**
 
+**Step 1: Initial deployment (required environment variables):**
 ```
 SHOPIFY_API_KEY=06c67977ed4e4772a1e64826c2aebac2
 SHOPIFY_API_SECRET=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
 SCOPES=read_product_listings,write_product_listings,read_publications,write_publications,read_channels,write_channels,read_products,write_products,read_orders,read_script_tags,write_script_tags
-SHOPIFY_APP_URL=https://YOUR-APP-NAME.ondigitalocean.app
-HOST=https://YOUR-APP-NAME.ondigitalocean.app
 DATABASE_URL=file:/data/prod.sqlite
 NODE_ENV=production
 CAPTY_API_KEY=capty-secret-key-2025
 ```
 
-**⚠️ IMPORTANT:**
-- Replace `YOUR-APP-NAME` with your actual DigitalOcean app name
+**Step 2: After first successful deployment:**
+
+The app will deploy with a placeholder URL. Once deployed:
+
+1. **Get your app URL from DigitalOcean dashboard** (shown at the top, looks like `https://capty-app-abc123.ondigitalocean.app`)
+2. **Add these two environment variables:**
+   ```
+   SHOPIFY_APP_URL=https://capty-app-abc123.ondigitalocean.app
+   HOST=https://capty-app-abc123.ondigitalocean.app
+   ```
+3. **Redeploy** to use your actual URL
+
+**⚠️ IMPORTANT NOTES:**
+- The app will work for initial deployment without SHOPIFY_APP_URL/HOST
+- You MUST set these after first deployment for the app to work with Shopify
 - The `DATABASE_URL` MUST use an absolute path: `file:/data/prod.sqlite`
 - Do NOT use relative paths like `./dev.sqlite` or `file:dev.sqlite`
 
@@ -137,7 +149,31 @@ npx prisma generate
 
 ## 🔍 Troubleshooting Deployment Issues
 
-### Issue 1: "Container exited with non-zero exit code"
+**If you see "component terminated with non-zero exit code: 1"**, check the logs above for the specific error. The most common errors are listed below.
+
+### Issue 1: App uses placeholder URL (Expected on first deployment)
+
+**Log Message:**
+```
+⚠️  No SHOPIFY_APP_URL or HOST set! Using placeholder URL.
+⚠️  Please set SHOPIFY_APP_URL in environment variables and redeploy.
+```
+
+**This is EXPECTED on first deployment!** The app will start successfully with a placeholder.
+
+**To complete setup:**
+1. After first deployment, get your app URL from DigitalOcean dashboard (e.g., `https://capty-app-abc123.ondigitalocean.app`)
+2. Go to Settings → App-Level Environment Variables
+3. Add these variables:
+   ```
+   SHOPIFY_APP_URL=https://capty-app-abc123.ondigitalocean.app
+   HOST=https://capty-app-abc123.ondigitalocean.app
+   ```
+4. Click "Save" and redeploy
+
+**Note:** The app won't work with Shopify until you set your actual URL.
+
+### Issue 2: "Container exited with non-zero exit code" (after fixing appUrl)
 
 **Check These:**
 
@@ -161,7 +197,7 @@ npx prisma generate
 4. **Node version is 18+**
    - Check in DigitalOcean → Settings → Runtime & Build
 
-### Issue 2: "Module not found: prisma client" or "prisma: command not found"
+### Issue 3: "Module not found: prisma client" or "prisma: command not found"
 
 **Fix:**
 - **Most Common Cause:** `prisma` is in `devDependencies` instead of `dependencies`
@@ -179,14 +215,14 @@ npx prisma generate
 - Also ensure `postinstall` script runs: `"postinstall": "prisma generate"`
 - Or add to build command: `npm run build && prisma generate`
 
-### Issue 3: "Database is locked" or "Cannot access database"
+### Issue 4: "Database is locked" or "Cannot access database"
 
 **Fix:**
 - Ensure persistent volume is mounted to `/data`
 - DATABASE_URL must point to `/data/prod.sqlite`
 - Volume must have write permissions
 
-### Issue 4: App starts but webhooks don't work
+### Issue 5: App starts but webhooks don't work
 
 **Fix:**
 1. Update Shopify Partner Dashboard:

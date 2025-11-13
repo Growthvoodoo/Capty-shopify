@@ -10,12 +10,30 @@ import prisma from "./db.server";
 
 const prismaSessionStorage = new PrismaSessionStorage(prisma);
 
+// Get app URL from environment variables
+// DigitalOcean: Set SHOPIFY_APP_URL or HOST to your actual app URL after first deployment
+// For initial deployment, uses a placeholder that allows the app to start
+const getAppUrl = () => {
+  // Check explicit environment variables first
+  if (process.env.SHOPIFY_APP_URL) return process.env.SHOPIFY_APP_URL;
+  if (process.env.HOST) return process.env.HOST;
+
+  // DigitalOcean provides APP_URL in some cases
+  if (process.env.APP_URL) return process.env.APP_URL;
+
+  // For initial deployment, provide a valid placeholder URL
+  // This allows the app to build and deploy, then you can update with actual URL
+  console.warn("⚠️  No SHOPIFY_APP_URL or HOST set! Using placeholder URL.");
+  console.warn("⚠️  Please set SHOPIFY_APP_URL in environment variables and redeploy.");
+  return "https://placeholder.example.com";
+};
+
 const shopify = shopifyApp({
   apiKey: process.env.SHOPIFY_API_KEY,
   apiSecretKey: process.env.SHOPIFY_API_SECRET || "",
   apiVersion: LATEST_API_VERSION,
   scopes: process.env.SCOPES?.split(","),
-  appUrl: process.env.SHOPIFY_APP_URL || process.env.HOST || "",
+  appUrl: getAppUrl(),
   authPathPrefix: "/auth",
   sessionStorage: prismaSessionStorage,
   distribution: AppDistribution.AppStore,
