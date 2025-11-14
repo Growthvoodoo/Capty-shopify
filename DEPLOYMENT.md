@@ -54,6 +54,34 @@ Add `postinstall` script to `package.json` (already added):
 }
 ```
 
+## 🚀 Quick Start (TL;DR)
+
+**1. Set Run Command in DigitalOcean:**
+- Build Command: `npm run build`
+- **Run Command: `npm run start:production`** ⚠️ CRITICAL!
+
+**2. Set these environment variables in DigitalOcean:**
+
+```bash
+SHOPIFY_API_KEY=06c67977ed4e4772a1e64826c2aebac2
+SHOPIFY_API_SECRET=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
+SCOPES=read_product_listings,write_product_listings,read_publications,write_publications,read_channels,write_channels,read_products,write_products,read_orders,read_script_tags,write_script_tags
+DATABASE_URL=file:/data/prod.sqlite
+NODE_ENV=production
+CAPTY_API_KEY=capty-secret-key-2025
+```
+
+**3. After first successful deployment:**
+1. Get your app URL from dashboard (e.g., `https://capty-app-abc123.ondigitalocean.app`)
+2. Add two more variables:
+   ```
+   SHOPIFY_APP_URL=https://your-actual-url.ondigitalocean.app
+   HOST=https://your-actual-url.ondigitalocean.app
+   ```
+3. Redeploy
+
+---
+
 ## 📋 Step-by-Step DigitalOcean Deployment
 
 ### Step 1: Prepare Your Repository
@@ -80,8 +108,10 @@ Add `postinstall` script to `package.json` (already added):
 #### Build Settings
 
 - **Build Command:** `npm run build`
-- **Run Command:** `npm start`
+- **Run Command:** `npm run start:production` ⚠️ **IMPORTANT: Use `start:production`, NOT `start`**
 - **Node Version:** 18.x or higher
+
+**Why `start:production`?** This command runs the `start.sh` script which automatically initializes the database before starting the app. Using `npm start` will cause the "Prisma session table does not exist" error.
 
 #### Environment Variables (CRITICAL!)
 
@@ -151,6 +181,20 @@ npx prisma generate
 
 **If you see "component terminated with non-zero exit code: 1"**, check the logs above for the specific error. The most common errors are listed below.
 
+### Issue 0: "Missing values for: apiSecretKey, apiKey" (FIRST DEPLOYMENT)
+
+**Error Message:**
+```
+Error: Cannot initialize Shopify API Library. Missing values for: apiSecretKey, apiKey
+```
+
+**Cause:** You haven't set the required environment variables in DigitalOcean yet.
+
+**Fix:**
+1. Go to your DigitalOcean app → Settings → App-Level Environment Variables
+2. Add all the required variables from Step 1 (see Environment Variables section above)
+3. Click "Save" - the app will automatically redeploy
+
 ### Issue 1: App uses placeholder URL (Expected on first deployment)
 
 **Log Message:**
@@ -197,7 +241,24 @@ npx prisma generate
 4. **Node version is 18+**
    - Check in DigitalOcean → Settings → Runtime & Build
 
-### Issue 3: "Module not found: prisma client" or "prisma: command not found"
+### Issue 3: "Prisma session table does not exist"
+
+**Error Message:**
+```
+Error: Prisma session table does not exist. This could happen for a few reasons...
+```
+
+**Cause:** Database tables haven't been created yet.
+
+**Fix:**
+1. Make sure you're using the correct Run Command in DigitalOcean
+2. Go to Settings → Components → Your App Component → Edit
+3. Change **Run Command** to: `npm run start:production`
+4. Click "Save" and redeploy
+
+**Why?** The `start:production` script runs `prisma db push` to create database tables before starting the app.
+
+### Issue 4: "Module not found: prisma client" or "prisma: command not found"
 
 **Fix:**
 - **Most Common Cause:** `prisma` is in `devDependencies` instead of `dependencies`
@@ -215,14 +276,14 @@ npx prisma generate
 - Also ensure `postinstall` script runs: `"postinstall": "prisma generate"`
 - Or add to build command: `npm run build && prisma generate`
 
-### Issue 4: "Database is locked" or "Cannot access database"
+### Issue 5: "Database is locked" or "Cannot access database"
 
 **Fix:**
 - Ensure persistent volume is mounted to `/data`
 - DATABASE_URL must point to `/data/prod.sqlite`
 - Volume must have write permissions
 
-### Issue 5: App starts but webhooks don't work
+### Issue 6: App starts but webhooks don't work
 
 **Fix:**
 1. Update Shopify Partner Dashboard:

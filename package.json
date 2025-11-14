@@ -8,6 +8,7 @@
     "dev": "remix vite:dev",
     "build": "remix vite:build",
     "start": "remix-serve ./build/server/index.js",
+    "start:production": "sh start.sh",
     "typecheck": "tsc",
     "postinstall": "prisma generate",
     "setup:production": "prisma db push && prisma generate"
